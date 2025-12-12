@@ -1,0 +1,37 @@
+const mongoose = require("mongoose");
+const userSchema = new mongoose.Schema({
+  watchHisorty: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "video",
+    },
+  ],
+  username: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  fullname: {
+    type: String,
+  },
+  avatar: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  coverImage: {
+    type: String,
+  },
+  password: {
+    type: String,
+  },
+  refreshedToken: {
+    type: String,
+  },
+},{ timestamps: true });
+module.exports = mongoose.model("User", userSchema);
