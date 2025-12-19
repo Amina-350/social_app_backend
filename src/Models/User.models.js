@@ -18,12 +18,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
-  email: {
-    type: String,
-  },
-  email: {
-    type: String,
-  },
+ 
   coverImage: {
     type: String,
   },
