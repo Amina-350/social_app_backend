@@ -11,7 +11,6 @@ app.use(cors());
 dbconnection();
 // using express json
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/user',UserRoute);
 app.get('/api/usera', (req, res) => {

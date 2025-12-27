@@ -25,8 +25,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
-  refreshedToken: {
-    type: String,
-  },
+
 },{ timestamps: true });
 module.exports = mongoose.model("User", userSchema);
