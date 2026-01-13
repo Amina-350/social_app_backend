@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const SECRET_KEY = 'your_secret_key';
+const SECRET_KEY = 'your-secret-key';
 const AuthenticationMiddleware =(req,res,next)=>{
 const token=req.headers['authorization']?.split(' ')[1];
 if(!token){

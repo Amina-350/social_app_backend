@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { createUser, loginUser } = require("../Controllers/UserController");
+const { createUser, loginUser,getUserProfileById} = require("../Controllers/UserController");
 const upload = require("../multer");
 
 router.post(
@@ -14,5 +14,6 @@ router.post(
 );
 
 router.post("/loginUser", loginUser);
+router.get('/getuserprofile/:userId',getUserProfileById)
 
 module.exports = router;

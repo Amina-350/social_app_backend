@@ -2,6 +2,7 @@
 const User= require('../Models/User.models')
  const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const Vedio=require('../Models/Video.models')
 
 const createUser=async(req,res)=>{
 try{
@@ -68,5 +69,43 @@ return res.status(200).json({
     });
  }
 
+
+
 }
-module.exports = { createUser,loginUser };
+
+
+
+// get user profile
+
+const getUserProfileById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // 1️⃣ Get user info (hide password)
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // 2️⃣ Get videos created by this user
+    const videos = await Vedio.find({ owner: userId })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      user,
+      videos,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+module.exports = { createUser,loginUser,getUserProfileById };

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const VideoSchema = new mongoose.Schema({
-
   VideoFile: {
     type: String,
   },

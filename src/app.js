@@ -1,45 +1,91 @@
-const express=require("express");
-const dbconnection=require('./Utilty/dbconnection')
-const app=express();
+const express = require("express");
+const dbconnection = require("./Utilty/dbconnection");
+const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
-const UserRoute=require('./Routes/UserRoute');
-const router = express.Router();
+const session = require("express-session");
+const passport = require("passport");
+const UserRoute = require("./Routes/UserRoute");
+const vedioRoute=require('./Routes/VedioRoute');
+
 dotenv.config();
-// Middleware
-app.use(cors());
-dbconnection();
-// using express json
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/api/user',UserRoute);
-app.get('/api/usera', (req, res) => {
-  res.send("heello");
-});
 
-// Simple POST API for testing
-app.post("/test", (req, res) => {
-  try {
-    const data = req.body;
-
-    // Example: throw error if body is empty
-    if (!data || Object.keys(data).length === 0) {
-      throw new Error("Request body is empty");
-    }
-
-    res.status(201).json({
-      message: "POST request received successfully",
-      receivedData: data,
-    });
-  } catch (error) {
-    // Catch any error and send proper response
-    res.status(400).json({
-      success: false,
-      message: error.message || "Something went wrong",
-    });
+app.use((req, res, next) => {
+  // Only parse body for methods that can have one
+  if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+    express.json()(req, res, next);
+  } else {
+    next();
   }
 });
 
 
+app.use(express.urlencoded({ extended: true }));
 
-module.exports=app;
+// Passport config
+require("./Auth/google");
+
+// Middleware
+app.use(cors());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+dbconnection();
+
+// Routes
+app.use("/api/user", UserRoute);
+app.use("/api/vedio", vedioRoute);
+
+// Google OAuth Routes
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: "Google login successful",
+      user: req.user,
+    });
+  }
+);
+
+// Test routes
+app.get("/api/usera", (req, res) => {
+  res.send("hello");
+});
+
+// app.post("/test", (req, res) => {
+//   try {
+//     const data = req.body;
+
+//     if (!data || Object.keys(data).length === 0) {
+//       throw new Error("Request body is empty");
+//     }
+
+//     res.status(201).json({
+//       message: "POST request received successfully",
+//       receivedData: data,
+//     });
+//   } catch (error) {
+//     res.status(400).json({
+//       success: false,
+//       message: error.message || "Something went wrong",
+//     });
+//   }
+// });
+
+module.exports = app;
